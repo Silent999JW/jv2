@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>JuiceVault Studio</title>
+<style>
+:root{--a1:#8b5cf6;--a2:#ec4899;--a3:#22d3ee;--good:#34d399;--bad:#fb7185;--text:#f3f3fb;--muted:#9c9cbc;
+--glass:rgba(255,255,255,.07);--glass2:rgba(255,255,255,.12);--line:rgba(255,255,255,.13);--r:16px;
+--st:max(env(safe-area-inset-top,0px),var(--safe-area-inset-top,0px));
+--sb:max(env(safe-area-inset-bottom,0px),var(--safe-area-inset-bottom,0px));
+--sl:max(env(safe-area-inset-left,0px),var(--safe-area-inset-left,0px));
+--sr:max(env(safe-area-inset-right,0px),var(--safe-area-inset-right,0px))}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{font-family:Roboto,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);background:#07070f;font-size:14px;
+padding:var(--st) var(--sr) 0 var(--sl);-webkit-text-size-adjust:100%}
+.bg{position:fixed;inset:0;z-index:-2;background:linear-gradient(125deg,#080818,#1a0d3a,#0a2142,#2b0e3d,#080818);background-size:400% 400%;animation:shift 30s ease infinite}
+.blob{position:fixed;z-index:-1;border-radius:50%;filter:blur(70px);opacity:.42;pointer-events:none}
+.b1{width:70vw;height:70vw;left:-25vw;top:-20vw;background:radial-gradient(circle,#7c3aed,transparent 65%)}
+.b2{width:60vw;height:60vw;right:-25vw;top:30vh;background:radial-gradient(circle,#ec4899,transparent 65%)}
+@keyframes shift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@media (prefers-reduced-motion:reduce){.bg{animation:none}}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.wrap{padding:12px 12px 0;display:flex;flex-direction:column;gap:12px}
+header{padding:12px;display:flex;flex-direction:column;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px}
+.logo{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--a1),var(--a2) 60%,var(--a3));display:grid;place-items:center;box-shadow:0 6px 20px rgba(139,92,246,.5)}
+.logo svg{width:17px;height:17px;fill:#fff}
+.grad{background:linear-gradient(90deg,#c4b5fd,#f9a8d4,#67e8f9);-webkit-background-clip:text;background-clip:text;color:transparent}
+.line{display:flex;gap:8px;align-items:center}
+.field{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:12px;padding:0 12px;height:44px;flex:1;min-width:0}
+.field:focus-within{border-color:var(--a1);box-shadow:0 0 0 3px rgba(139,92,246,.25)}
+.field input{background:none;border:0;outline:0;color:var(--text);font:inherit;font-size:15px;width:100%;min-width:0}
+.field span{color:var(--muted);font-size:12px;white-space:nowrap}
+button{font:inherit;color:var(--text);border:1px solid var(--line);background:var(--glass2);border-radius:12px;height:44px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;transition:transform .12s,opacity .15s}
+button:active{transform:scale(.96)}
+button:disabled{opacity:.45}
+button.primary{border:0;background:linear-gradient(120deg,var(--a1),var(--a2));font-weight:700;box-shadow:0 8px 24px rgba(168,85,247,.38)}
+button.ghost{background:transparent}
+svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sec{display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:0 4px 8px}
+.sec a{color:var(--a3);text-transform:none;letter-spacing:0;font-weight:600;margin-left:14px;padding:4px 0}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:0 2px 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;display:flex;align-items:center;gap:9px;padding:7px 12px 7px 7px;border-radius:14px;border:1px solid var(--line);background:var(--glass);max-width:230px}
+.chip.on{background:linear-gradient(120deg,rgba(139,92,246,.3),rgba(236,72,153,.2));border-color:rgba(167,139,250,.6)}
+.chip .cv{width:38px;height:38px;border-radius:9px}
+.chip .t{font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
+.chip .s{font-size:11.5px;color:var(--muted);margin-top:2px;white-space:nowrap}
+.badge{font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:99px;background:rgba(52,211,153,.2);color:var(--good);margin-left:6px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{padding:10px 8px;text-align:center;border-radius:14px}
+.stat .k{font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);font-weight:700}
+.stat .v{font-size:18px;font-weight:800;margin-top:3px}
+.stat.new .v{color:var(--good)}
+.panel{overflow:hidden}
+.toolbar{display:flex;flex-direction:column;gap:10px;padding:12px;border-bottom:1px solid var(--line)}
+.seg{display:flex;flex:1;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{flex:1;height:36px;border:0;background:none;border-radius:9px;padding:0;font-size:13px;color:var(--muted)}
+.seg button.on{background:linear-gradient(120deg,var(--a1),var(--a2));color:#fff;font-weight:700}
+select{background:rgba(0,0,0,.3);border:1px solid var(--line);color:var(--text);border-radius:12px;height:44px;padding:0 10px;font:inherit;flex:1;min-width:0}
+select option{background:#14142a}
+.tg{display:flex;align-items:center;gap:8px;color:var(--muted);user-select:none;font-size:13px;white-space:nowrap}
+.tg input{display:none}
+.tg i{width:36px;height:22px;border-radius:99px;background:rgba(255,255,255,.16);position:relative;transition:.2s;flex:none}
+.tg i::after{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
+.tg input:checked+i{background:linear-gradient(120deg,var(--a1),var(--a2))}
+.tg input:checked+i::after{left:17px}
+.list{padding:6px}
+.row{display:grid;grid-template-columns:46px 1fr auto;gap:12px;align-items:center;padding:8px 8px;border-radius:14px;position:relative;content-visibility:auto;contain-intrinsic-size:auto 62px}
+.row.new::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:3px;background:linear-gradient(var(--good),var(--a3))}
+.row.have{opacity:.55}
+.cv{width:46px;height:46px;border-radius:10px;flex:none;position:relative;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.cv img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .4s}
+.cv img.ok{opacity:1}
+.cv svg{position:absolute;inset:0;margin:auto;width:18px;height:18px;fill:rgba(255,255,255,.55)}
+.nm{min-width:0}
+.nm b{display:block;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm small{color:var(--muted);display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+.pill{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:99px;white-space:nowrap}
+.pill.new{background:rgba(52,211,153,.17);color:var(--good);border:1px solid rgba(52,211,153,.35)}
+.pill.have{background:rgba(148,163,184,.14);color:#aab4c5;border:1px solid rgba(148,163,184,.25)}
+.pill.unk{background:rgba(255,255,255,.07);color:var(--muted);border:1px solid var(--line)}
+.empty{display:grid;place-items:center;text-align:center;color:var(--muted);padding:44px 20px;line-height:1.5}
+.empty h2{color:var(--text);font-size:21px;margin-bottom:8px}
+.skel{height:62px;margin:6px;border-radius:14px;background:linear-gradient(100deg,rgba(255,255,255,.04) 30%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.04) 70%);background-size:300% 100%;animation:sk 1.2s linear infinite}
+@keyframes sk{from{background-position:100% 0}to{background-position:-100% 0}}
+.spacer{height:calc(130px + var(--sb))}
+.dock{position:fixed;left:0;right:0;bottom:0;padding:10px 12px calc(10px + var(--sb));padding-left:calc(12px + var(--sl));padding-right:calc(12px + var(--sr));
+background:rgba(10,10,24,.82);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-top:1px solid var(--line);z-index:20}
+.dock .prog{margin-bottom:10px}
+.dock .top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px}
+.dock .cur{font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.dock .meta{color:var(--muted);font-size:12px;white-space:nowrap}
+.bar{height:8px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--a1),var(--a2),var(--a3));transition:width .3s}
+.dock .big{width:100%;height:50px;font-size:15px}
+.toasts{position:fixed;left:12px;right:12px;top:calc(var(--st) + 10px);display:flex;flex-direction:column;gap:8px;z-index:50;pointer-events:none}
+.toast{padding:12px 14px;border-radius:14px;animation:in .3s ease;font-weight:550;background:rgba(20,20,42,.94)}
+.toast.err{border-color:rgba(251,113,133,.7)}
+.toast.ok{border-color:rgba(52,211,153,.55)}
+@keyframes in{from{opacity:0;transform:translateY(-14px)}}
+.modal{position:fixed;inset:0;background:rgba(3,3,12,.65);z-index:60;display:none;align-items:flex-end;justify-content:center;padding:16px}
+.modal.show{display:flex}
+.modal .box{width:min(460px,100%);padding:22px;background:rgba(22,22,46,.96);animation:pop .25s ease;margin-bottom:var(--sb)}
+@keyframes pop{from{opacity:0;transform:translateY(24px)}}
+.modal h2{font-size:19px;margin-bottom:8px}.modal p{white-space:pre-line;color:#cfcfe6;line-height:1.5;margin-bottom:18px;word-break:break-word}
+.modal .bt{display:flex;gap:10px;justify-content:flex-end}
+.note{font-size:12px;color:var(--muted);padding:2px 4px 0;line-height:1.4}
+</style></head>
+<body>
+<div class="bg"></div><div class="blob b1"></div><div class="blob b2"></div>
+<div class="toasts" id="toasts"></div>
+<div class="modal" id="modal"><div class="box glass"><h2 id="mt"></h2><p id="mp"></p><div class="bt"><button class="ghost" id="mno">Abbrechen</button><button class="primary" id="myes">Los</button></div></div></div>
+
+<div class="wrap">
+<header class="glass">
+  <div class="brand"><div class="logo"><svg viewBox="0 0 24 24"><path d="M9 18V6l11-2v12.2A3 3 0 1 1 18 14V8.3l-7 1.3V18a3 3 0 1 1-2-2.8z"/></svg></div><span class="grad">JuiceVault Studio</span></div>
+  <div class="line">
+    <div class="field"><span>@</span><input id="user" placeholder="Username" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+    <button class="primary" id="bLoad"><svg class="i" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>Laden</button>
+  </div>
+  <div class="line">
+    <div class="field"><span>Musik /</span><input id="folder" placeholder="JuiceVault" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+    <button id="bCmp"><svg class="i" viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>Vergleichen</button>
+  </div>
+</header>
+
+<section class="glass" style="padding:12px 8px 8px">
+  <div class="sec"><span>Playlists</span><span><a id="selAll">Alle</a><a id="selNone">Keine</a></span></div>
+  <div class="chips" id="pls"><div class="note">Username eingeben und Laden tippen.</div></div>
+</section>
+
+<div class="stats">
+  <div class="stat glass"><div class="k">Songs</div><div class="v" id="stAll">–</div></div>
+  <div class="stat glass"><div class="k">Vorhanden</div><div class="v" id="stHave">–</div></div>
+  <div class="stat glass new"><div class="k">Neu</div><div class="v" id="stNew">–</div></div>
+  <div class="stat glass"><div class="k">Größe</div><div class="v" id="stSize">–</div></div>
+</div>
+
+<section class="panel glass">
+  <div class="toolbar">
+    <div class="field"><svg class="i" viewBox="0 0 24 24" style="color:var(--muted)"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" placeholder="Suchen …" spellcheck="false" autocomplete="off"></div>
+    <div class="line"><div class="seg" id="seg"><button data-f="all" class="on">Alle</button><button data-f="new">Neu</button><button data-f="have">Vorhanden</button></div></div>
+    <div class="line">
+      <select id="sortSel"><option value="order">Reihenfolge</option><option value="title">Titel</option><option value="artist">Artist</option><option value="year">Jahr</option><option value="duration">Länge</option><option value="bytes">Größe</option><option value="plays">Plays</option><option value="added">Hinzugefügt</option></select>
+      <button id="bDir" title="Richtung" style="width:44px;padding:0">↑↓</button>
+      <button id="bExp"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Export</button>
+    </div>
+    <label class="tg"><input type="checkbox" id="optSub"><i></i>Pro Playlist ein Unterordner</label>
+  </div>
+  <div class="list" id="list"><div class="empty"><div><h2 class="grad">Willkommen</h2>Username eingeben und <b>Laden</b> tippen –<br>danach vergleichen und neue Songs laden.<br><br>Die Songs landen in <b>Musik/<span id="fHint">JuiceVault</span></b> und erscheinen in jedem Musik-Player.</div></div></div>
+</section>
+<div class="spacer"></div>
+</div>
+
+<div class="dock" id="dock">
+  <div class="prog" id="prog" hidden>
+    <div class="top"><div class="cur" id="dCur">–</div><div class="meta" id="dMeta">–</div><button id="bCancel" style="height:34px;padding:0 12px">Stopp</button></div>
+    <div class="bar"><i id="dBar"></i></div>
+  </div>
+  <button class="primary big" id="bDl"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span id="dlTxt">Neue laden</span></button>
+</div>
+
+<script>
+//#PURE-START
+const API="https://api.juicevault.xyz",UA="JuiceVault-Studio/1.0";
+const RESERVED=/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$/i;
+function safe(name,maxlen=120){
+  name=String(name).normalize("NFC");
+  name=name.replace(/[<>:"/\\|?*\u0000-\u001f\u007f]/g,"_");
+  name=name.replace(/[\u200b-\u200f\u202a-\u202e\u2060\ufeff\ufffe\uffff]/g,"");
+  name=name.replace(/\s+/g," ").replace(/^[ .]+|[ .]+$/g,"");
+  if(RESERVED.test(name))name="_"+name;
+  name=Array.from(name).slice(0,maxlen).join("").replace(/[ .]+$/,"");
+  return name||"untitled"}
+function norm(s){return String(s).normalize("NFKC").toLowerCase().replace(/[^\p{L}\p{N}]+/gu,"")}
+function stemKey(filename){
+  let stem=filename.replace(/\.[^.]*$/,"");
+  stem=stem.replace(/^\d{3}\s+/,"");
+  stem=stem.replace(/\s*\[[0-9a-f]{8}\]$/,"");
+  return norm(stem)}
+function buildIndex(files){
+  const idx=new Map();
+  for(const f of files){
+    if(!/\.mp3$/i.test(f.name))continue;
+    const k=stemKey(f.name);
+    if(!idx.has(k))idx.set(k,[]);
+    idx.get(k).push([f.path,f.size])}
+  return idx}
+function isHave(s,idx,man,present){
+  const rel=man[s.id];
+  if(rel&&present.has(rel))return true;
+  if(idx.has(norm(safe(`${s.artist} - ${s.title}`))))return true;
+  return (idx.get(norm(safe(s.title)))||[]).some(([,sz])=>sz===s.bytes)}
+function slim(x){
+  return {id:x.id,title:x.title||"",artist:x.artist||"",album:x.album||"",year:x.year||null,duration:x.duration||0,length:x.length||"",
+    bitrate:x.bitrate||0,size:x.file_size||"",bytes:x.file_size_bytes||0,plays:x.play_count||0,added:x.archive_added_at||""}}
+//#PURE-END
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const NATIVE=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
+const JV=NATIVE?Capacitor.registerPlugin("JuiceVault"):null;
+const NHttp=NATIVE?Capacitor.registerPlugin("CapacitorHttp"):null;
+const ID_RE=/^[0-9a-fA-F-]{8,40}$/;
+
+class RateLimited extends Error{constructor(ra){super("Rate-Limit");this.retryAfter=ra}}
+class UserError extends Error{}
+
+// ---------------------------------------------------------------- API
+async function rawGet(url){
+  if(NHttp){
+    const r=await NHttp.request({url,method:"GET",headers:{"User-Agent":UA,"Accept":"application/json"},responseType:"json",connectTimeout:30000,readTimeout:30000});
+    let data=r.data;if(typeof data==="string"){try{data=JSON.parse(data)}catch(e){}}
+    return {status:r.status,data,headers:r.headers||{}}}
+  const r=await fetch(url);let data=null;try{data=await r.json()}catch(e){}
+  return {status:r.status,data,headers:{"retry-after":r.headers.get("Retry-After")}}}
+const hdr=(h,k)=>{for(const x in h)if(x.toLowerCase()===k)return h[x];return null};
+async function getJson(path,retries=3){
+  for(let a=0;a<retries;a++){
+    let r;
+    try{r=await rawGet(API+path)}catch(e){if(a===retries-1)throw new UserError("Netzwerkfehler – Internet prüfen.");await sleep(2000*(a+1));continue}
+    if(r.status===429){const ra=hdr(r.headers,"retry-after");throw new RateLimited(/^\d+$/.test(ra||"")?+ra:null)}
+    if(r.status>=500&&r.status<=504&&a<retries-1){await sleep(2000*(a+1));continue}
+    if(r.status>=400){const e=new Error("API-Fehler HTTP "+r.status);e.code=r.status;throw e}
+    return r.data}}
+async function pool(items,n,fn){const out=new Array(items.length);let i=0;
+  await Promise.all(Array.from({length:Math.min(n,items.length)},async()=>{while(i<items.length){const k=i++;out[k]=await fn(items[k],k)}}));return out}
+
+async function loadUser(user){
+  const q=encodeURIComponent(user);let d;
+  try{d=await getJson(`/user/playlists/user/${q}`)}catch(e){if(e.code===404)throw new UserError("Username nicht gefunden.");throw e}
+  if(d.private)throw new UserError("Profil ist privat.");
+  const playlists=[],songs={};
+  const add=(pid,name,desc,share,entries,dur)=>{const ids=[];
+    for(const s of entries||[]){const x=s.song;if(x){songs[x.id]=slim(x);ids.push(x.id)}}
+    playlists.push({id:pid,name,description:desc||"",shareId:share||"",songs:ids,count:ids.length,duration:dur||ids.reduce((t,i)=>t+songs[i].duration,0)})};
+  const fulls=await pool(d.data||[],4,p=>getJson(`/user/playlists/${p._id}`));
+  for(const f of fulls){const full=f.data;add(full._id,full.name,full.description,full.shareId,full.songs,full.totalDuration)}
+  try{const L=await getJson(`/user/likes/public/${q}`);if(!L.private&&L.data&&L.data.length)add("likes","Likes","Öffentliche Likes","",L.data)}catch(e){}
+  if(!playlists.length)throw new UserError("Keine öffentlichen Playlists oder Likes gefunden.");
+  return {playlists,songs}}
+
+// ---------------------------------------------------------------- UI helpers
+function toast(msg,type="ok",ms=4200){const d=document.createElement("div");d.className="toast glass "+type;d.textContent=msg;$("#toasts").appendChild(d);setTimeout(()=>d.remove(),ms)}
+function ask(title,text,yes="Los"){return new Promise(res=>{$("#mt").textContent=title;$("#mp").textContent=text;$("#myes").textContent=yes;$("#modal").classList.add("show");
+  const done=v=>{$("#modal").classList.remove("show");$("#myes").onclick=$("#mno").onclick=null;res(v)};$("#myes").onclick=()=>done(true);$("#mno").onclick=()=>done(false)})}
+const fmtB=b=>b>=1073741824?(b/1073741824).toFixed(2)+" GB":b>=1048576?(b/1048576).toFixed(b>=1.05e8?0:1)+" MB":b>=1024?Math.round(b/1024)+" KB":b+" B";
+const hue=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))%360;return h};
+const ph=id=>{const h=hue(id);return `background:linear-gradient(135deg,hsl(${h} 70% 42%),hsl(${(h+50)%360} 70% 30%))`};
+const NOTE='<svg viewBox="0 0 24 24"><path d="M9 18V6l11-2v12.2A3 3 0 1 1 18 14V8.3l-7 1.3V18a3 3 0 1 1-2-2.8z"/></svg>';
+const cover=id=>`<div class="cv" style="${ph(id)}">${NOTE}<img loading="lazy" src="${API}/cdn/music/covers/${esc(id)}" onload="this.classList.add('ok')" onerror="this.remove()"></div>`;
+const durFmt=s=>{s=Math.round(s||0);const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?`${h} Std ${m} Min`:`${m} Min`};
+const lenFmt=s=>`${Math.floor(s/60)}:${String(Math.round(s%60)).padStart(2,"0")}`;
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+let P=[],S={},have=null,sel=new Set(),filt="all",sortKey="order",sortDir=1,q="",pollT=null,wasRunning=false,running=false;
+const folderName=()=>($("#folder").value.trim().replace(/^[\/\\]+|[\/\\]+$/g,"")||"JuiceVault");
+
+function renderPls(){
+  $("#pls").innerHTML=P.length?P.map(p=>{const nw=have?p.songs.filter(i=>!have.has(i)).length:0;
+    return `<div class="chip ${sel.has(p.id)?"on":""}" data-id="${esc(p.id)}">${cover(p.songs[0]||"x")}<div style="min-width:0"><div class="t">${esc(p.name)}${nw?`<span class="badge">${nw} neu</span>`:""}</div><div class="s">${p.count} Songs · ${durFmt(p.duration)}</div></div></div>`}).join(""):`<div class="note">Username eingeben und Laden tippen.</div>`}
+function selected(){const seen=new Set(),out=[];P.forEach(p=>{if(!sel.has(p.id))return;p.songs.forEach(id=>{if(!seen.has(id)&&S[id]){seen.add(id);out.push({s:S[id],pl:p.name,o:out.length+1})}})});return out}
+function view(){
+  const base=selected();let a=base;const lq=q.toLowerCase();
+  if(lq)a=a.filter(x=>(x.s.title+" "+x.s.artist+" "+x.s.album+" "+(x.s.year||"")).toLowerCase().includes(lq));
+  if(have&&filt==="new")a=a.filter(x=>!have.has(x.s.id));
+  if(have&&filt==="have")a=a.filter(x=>have.has(x.s.id));
+  if(sortKey!=="order"){const k=sortKey;a=[...a].sort((x,y)=>{const u=x.s[k]??"",v=y.s[k]??"";return (typeof u==="number"&&typeof v==="number"?u-v:String(u).localeCompare(String(v),undefined,{numeric:true,sensitivity:"base"}))*sortDir})}
+  else if(sortDir<0)a=[...a].reverse();
+  return {base,a}}
+function renderAll(){renderPls();renderList()}
+function renderList(){
+  const {base,a}=view();
+  const nHave=have?base.filter(x=>have.has(x.s.id)).length:null,nNew=have?base.length-nHave:null;
+  $("#stAll").textContent=base.length||"–";$("#stHave").textContent=have?nHave:"–";$("#stNew").textContent=have?nNew:"–";
+  const nb=have?base.filter(x=>!have.has(x.s.id)).reduce((t,x)=>t+x.s.bytes,0):0;$("#stSize").textContent=have?fmtB(nb):"–";
+  updateDock(nNew,nb);
+  if(!P.length)return;
+  if(!a.length){$("#list").innerHTML=`<div class="empty"><div><h2>Nichts gefunden</h2>Filter oder Auswahl ändern.</div></div>`;return}
+  $("#list").innerHTML=a.map(x=>{const s=x.s,h=have?have.has(s.id):null;
+    const pill=h===null?`<span class="pill unk">–</span>`:h?`<span class="pill have">✓ Da</span>`:`<span class="pill new">＋ Neu</span>`;
+    const meta=[s.year,s.length||lenFmt(s.duration),s.size||fmtB(s.bytes)].filter(Boolean).join(" · ");
+    return `<div class="row ${h===null?"":h?"have":"new"}">${cover(s.id)}<div class="nm"><b>${esc(s.title)}</b><small>${esc(s.artist)}${x.pl?` · ${esc(x.pl)}`:""}</small><small>${esc(meta)}</small></div>${pill}</div>`}).join("")}
+function updateDock(nNew,nb){
+  if(running)return;
+  const b=$("#bDl"),t=$("#dlTxt");
+  if(!P.length){t.textContent="Playlists laden";return}
+  if(!have){t.textContent="Mit Gerät vergleichen";return}
+  t.textContent=nNew?`${nNew} neue laden (${fmtB(nb)})`:"Alles vorhanden ✓"}
+
+// ---------------------------------------------------------------- actions
+async function ensurePerm(){
+  if(!NATIVE)return false;
+  try{const r=await JV.ensurePermission();return !!r.granted}catch(e){return false}}
+async function load(){
+  const user=$("#user").value.trim();if(!user)return toast("Username eingeben","err");
+  $("#bLoad").disabled=true;$("#list").innerHTML=Array(7).fill('<div class="skel"></div>').join("");
+  try{const d=await loadUser(user);P=d.playlists;S=d.songs;sel=new Set(P.map(p=>p.id));have=null;saveCfg();renderAll();toast(`${P.length} Playlists · ${Object.keys(S).length} Songs geladen`);
+    compare(true)}
+  catch(e){P=[];S={};renderAll();
+    const m=e instanceof RateLimited?"Rate-Limit der API erreicht – kurz warten.":e.message;
+    $("#list").innerHTML=`<div class="empty"><div><h2>Fehler</h2>${esc(m)}</div></div>`;toast(m,"err")}
+  finally{$("#bLoad").disabled=false}}
+async function compare(silent){
+  if(!P.length)return silent||toast("Erst Playlists laden","err");
+  if(!NATIVE)return silent||toast("Vergleich geht nur in der Android-App","err");
+  $("#bCmp").disabled=true;
+  try{
+    const granted=await ensurePerm();
+    if(!granted&&!silent)toast("Ohne Audio-Berechtigung sehe ich nur Songs, die diese App selbst geladen hat.","err",6000);
+    const r=await JV.scan();const files=r.files||[];
+    const idx=buildIndex(files),present=new Set(files.map(f=>f.path)),man=store.get("jv_manifest",{});
+    have=new Set(Object.keys(S).filter(id=>isHave(S[id],idx,man,present)));
+    saveCfg();renderAll();if(!silent)toast(`Vergleich fertig – ${files.length} Dateien auf dem Gerät geprüft`)}
+  catch(e){if(!silent)toast(e.message,"err")}finally{$("#bCmp").disabled=false}}
+function saveCfg(){store.set("jv_cfg",{user:$("#user").value,folder:$("#folder").value,sub:$("#optSub").checked})}
+
+async function download(){
+  if(running)return;
+  if(!P.length)return toast("Erst Playlists laden","err");
+  if(!NATIVE)return toast("Download geht nur in der Android-App","err");
+  if(!have){await compare(false);if(!have)return}
+  const sub=$("#optSub").checked,folder=folderName();
+  const todo=selected().filter(x=>!have.has(x.s.id));
+  if(!todo.length)return toast("Keine neuen Songs in der Auswahl");
+  const bytes=todo.reduce((t,x)=>t+x.s.bytes,0);
+  if(!await ask("Neue Songs laden",`${todo.length} Songs (${fmtB(bytes)}) nach\nMusik/${folder}${sub?"/<Playlist>":""}`,"Download starten"))return;
+  await ensurePerm();
+  const items=todo.map(x=>({id:x.s.id,folder,sub:sub?safe(x.pl):"",name:safe(`${x.s.artist} - ${x.s.title}`),
+    title:x.s.title,artist:x.s.artist,album:x.s.album,year:x.s.year||0,bytes:x.s.bytes}));
+  try{await JV.startDownload({items});startPoll()}catch(e){toast(e.message||String(e),"err")}}
+function mergeManifest(entries){
+  if(!entries||!entries.length)return;const m=store.get("jv_manifest",{});let ch=false;
+  for(const e of entries)if(m[e.id]!==e.path){m[e.id]=e.path;ch=true}
+  if(ch)store.set("jv_manifest",m)}
+function startPoll(){if(pollT)return;wasRunning=true;running=true;$("#prog").hidden=false;$("#bDl").disabled=true;pollT=setInterval(poll,500);poll()}
+async function poll(){
+  try{const j=await JV.progress();mergeManifest(j.ok_entries);
+    if(j.total){const frac=j.bytes_total?j.bytes_done/j.bytes_total:j.done/j.total;
+      $("#dBar").style.width=Math.min(100,frac*100).toFixed(1)+"%";$("#dCur").textContent=j.running?(j.current||"Starte …"):"Fertig";
+      $("#dMeta").textContent=`${j.done}/${j.total} · ${fmtB(j.bytes_done)} / ${fmtB(j.bytes_total)}`}
+    if(!j.running&&wasRunning){clearInterval(pollT);pollT=null;wasRunning=false;running=false;
+      toast(j.msg||"Fertig",(j.failed&&j.failed.length)?"err":"ok",7000);
+      if(j.failed&&j.failed.length)console.warn(j.failed);
+      $("#bDl").disabled=false;setTimeout(()=>{if(!running)$("#prog").hidden=true},2500);compare(true)}}
+  catch(e){}}
+
+async function exportSel(){
+  if(!P.length||!sel.size)return toast("Erst Playlists laden und auswählen","err");
+  if(!NATIVE)return toast("Export geht nur in der Android-App","err");
+  try{
+    for(const p of P){if(!sel.has(p.id))continue;
+      const songs=p.songs.map(i=>S[i]).filter(Boolean),base=safe(p.name);
+      await JV.saveText({name:base+".json",mime:"application/json",text:JSON.stringify({...p,songs},null,2)});
+      const cell=v=>`"${String(v??"").replace(/"/g,'""')}"`;
+      const rows=[["#","id","artist","title","album","year","length","bitrate","size_bytes","plays","added","stream_url"].join(",")];
+      songs.forEach((x,n)=>rows.push([n+1,x.id,x.artist,x.title,x.album,x.year,x.length,x.bitrate,x.bytes,x.plays,x.added,`${API}/music/stream/${x.id}?src=direct`].map(cell).join(",")));
+      await JV.saveText({name:base+".csv",mime:"text/csv",text:"\ufeff"+rows.join("\r\n")})}
+    toast("Export: Download/JuiceVault Export")}
+  catch(e){toast(e.message||String(e),"err")}}
+
+// ---------------------------------------------------------------- wiring
+$("#bLoad").onclick=load;$("#user").onkeydown=e=>{if(e.key==="Enter"){e.target.blur();load()}};
+$("#bCmp").onclick=()=>compare(false);$("#bDl").onclick=download;$("#bExp").onclick=exportSel;
+$("#bCancel").onclick=()=>{if(NATIVE)JV.cancelDownload()};
+$("#folder").onchange=()=>{saveCfg();$("#fHint").textContent=folderName();if(P.length)compare(true)};
+$("#optSub").onchange=saveCfg;
+$("#pls").onclick=e=>{const el=e.target.closest(".chip");if(!el)return;const id=el.dataset.id;sel.has(id)?sel.delete(id):sel.add(id);renderAll()};
+$("#selAll").onclick=()=>{sel=new Set(P.map(p=>p.id));renderAll()};$("#selNone").onclick=()=>{sel.clear();renderAll()};
+$("#q").oninput=e=>{q=e.target.value;renderList()};
+$("#seg").onclick=e=>{const b=e.target.closest("button");if(!b)return;filt=b.dataset.f;document.querySelectorAll("#seg button").forEach(x=>x.classList.toggle("on",x===b));renderList()};
+$("#sortSel").onchange=e=>{sortKey=e.target.value;sortDir=1;renderList()};
+$("#bDir").onclick=()=>{sortDir*=-1;renderList()};
+
+(async()=>{
+  const c=store.get("jv_cfg",{});$("#user").value=c.user||"";$("#folder").value=c.folder||"";$("#optSub").checked=!!c.sub;$("#fHint").textContent=folderName();
+  updateDock(0,0);
+  if(NATIVE){try{const j=await JV.progress();if(j.running)startPoll()}catch(e){}}
+})();
+</script></body></html>

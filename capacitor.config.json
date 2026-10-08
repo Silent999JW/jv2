@@ -1,0 +1,10 @@
+{
+  "appId": "xyz.juicevault.studio",
+  "appName": "JuiceVault Studio",
+  "webDir": "www",
+  "backgroundColor": "#07070f",
+  "plugins": {
+    "CapacitorHttp": { "enabled": true },
+    "SystemBars": { "style": "DARK" }
+  }
+}
